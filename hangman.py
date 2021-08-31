@@ -116,12 +116,12 @@ def set_language_intro():
     return language_index
 
 
+clear()
+language_index = set_language_intro()
+
 game = True
 
 while game:
-
-    clear()
-    language_index = set_language_intro()
 
     while True:
         clear()
@@ -148,13 +148,15 @@ while game:
     print(hidden_term)
 
     wrong_guesses = 0
-    tried_guesses = []
+    tried_guesses = [['Isprobani pokušaji: ',
+                      'Tried guesses: '][language_index], []]
     game_on = True
 
     while game_on:
-
-        guess = input(['Pogodi slovo! ',
-                       'Guess a character! '][language_index]).upper()
+        print('\n')
+        print(tried_guesses[0], ', '.join(tried_guesses[1]), '\n')
+        guess = input(['Pogodite slovo: ',
+                       'Guess a character: '][language_index]).upper()
 
         while True:
             if len(guess) > 1:
@@ -166,7 +168,7 @@ while game:
                     'Prije Entera upiši slovo! ',
                     'Before hitting Enter type a character! '
                 ][language_index])
-            elif guess in tried_guesses:
+            elif guess in tried_guesses[1]:
                 guess = input([
                     'Slovo je već upotrijebljeno, probaj drugo! ',
                     'Character already used, try another! '
@@ -174,7 +176,7 @@ while game:
             else:
                 break
 
-        tried_guesses.append(guess)
+        tried_guesses[1].append(guess)
 
         clear()
         for i in range(len(term)):
