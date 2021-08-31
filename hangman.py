@@ -1,5 +1,6 @@
-import os
 import getpass
+import os
+import sys
 from time import sleep
 
 
@@ -63,20 +64,75 @@ def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
-clear()
-print('\n')
-hello = '    V J E Š A L A   '
-for i in range(20):
-    print(hello[i], end=' ', flush=True); sleep(0.2)
+def esc_quit_game(key):
+    quit_on = True
+
+    while quit_on:
+        if key == '\x1b':
+            quit = input(
+                'Završi igru? (DA->Enter, NE->Esc)\nQuit game? (YES->Enter, NO->Esc)'
+            )
+            if quit == '\x1b':
+                clear()
+                break
+            elif quit == '':
+                clear()
+                print('Igra završava...\nThe game is quitting...',
+                      end=' ',
+                      flush=True)
+                sleep(2)
+                clear()
+                sys.exit()
+        else:
+            quit_on = False
+
+
+def set_language_intro():
+    language_index = input('1. Hrvatski\n2. English\n\n')
+    esc_quit_game(language_index)
+
+    while True:
+
+        if language_index not in ['1', '2']:
+            language_index = input(
+                'Izaberi jezik (1 ili 2)\nChoose a language (1 or 2)\n')
+        elif language_index == '':
+            language_index = input(
+                'Prije Entera izaberi jezik (1 ili 2)\nBefore Enter choose a language (1 or 2)\n'
+            )
+        else:
+            break
+
+    language_index = int(language_index) - 1
+
+    clear()
+
+    print('\n')
+    hello = ['    V J E Š A L A   ', '    H A N G M A N   ']
+    for i in range(20):
+        print(hello[language_index][i], end=' ', flush=True)
+        sleep(0.2)
+
+    return language_index
+
 
 game = True
 
 while game:
 
+    clear()
+    language_index = set_language_intro()
+
     while True:
         clear()
-        term = list(getpass.getpass('Upiši pojam za pogađanje: ').upper())
-        start = input('\nZa nastavak pritisni Enter\nZa novi unos bilo koju drugu tipku: ')
+        term = list(
+            getpass.getpass(
+                ['Upiši pojam za pogađanje: ',
+                 'Type a term to guess: '][language_index]).upper())
+        start = input([
+            '\nZa nastavak pritisni Enter\nZa novi unos bilo koju drugu tipku: ',
+            '\nHit Enter to continue\nOr any key for new term: '
+        ][language_index])
         if start == '':
             break
 
@@ -97,15 +153,24 @@ while game:
 
     while game_on:
 
-        guess = input('Pogodi slovo! ').upper()
+        guess = input(['Pogodi slovo! ',
+                       'Guess a character! '][language_index]).upper()
 
         while True:
             if len(guess) > 1:
-                guess = input('Upiši samo jedno slovo! ').upper()
+                guess = input(
+                    ['Upiši samo jedno slovo! ',
+                     'Type only one character! '][language_index]).upper()
             elif guess == '':
-                guess = input('Prije Entera upiši slovo! ')
+                guess = input([
+                    'Prije Entera upiši slovo! ',
+                    'Before hitting Enter type a character! '
+                ][language_index])
             elif guess in tried_guesses:
-                guess = input('Slovo već upotrijebljeno, probaj drugo! ').upper()
+                guess = input([
+                    'Slovo je već upotrijebljeno, probaj drugo! ',
+                    'Character already used, try another! '
+                ][language_index]).upper()
             else:
                 break
 
@@ -120,16 +185,18 @@ while game:
         if guess.upper() not in ''.join(term).upper():
             if wrong_guesses == 6:
                 hangman_7()
-                print('\nJaoooooo!')
-                print('\nRješenje je:\n' + ''.join(term))
+                print(['\nJaoooooo!', '\nAuuuuuch!'][language_index])
+                print(['\nRješenje je:\n', '\nThe solution is:\n'
+                       ][language_index] + ''.join(term))
                 game_on = False
                 break
             else:
                 wrong_guesses += 1
 
         if '•' not in hidden_term:
-            print('Rješenje je:\n' + ''.join(term))
-            print('\nBravo!')
+            print(['Pobjedaaaa!\n\n', 'You won!\n\n'][language_index] +
+                  ''.join(term))
+            print('\nBravooo!')
             game_on = False
             break
 
@@ -140,10 +207,13 @@ while game:
     replay = True
     while replay:
         print('\n')
-        new_game = input('Enter za novu igru\nBilo koja druga tipka za kraj ')
+        new_game = input([
+            'Enter za novu igru\nEsc za kraj ',
+            'Hit Enter for new game\nEsc to quit '
+        ][language_index])
         if new_game == '':
             replay = False
-        elif new_game != '':
+        elif new_game == '\x1b':
             clear()
             game = False
             break
