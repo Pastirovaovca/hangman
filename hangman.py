@@ -69,19 +69,18 @@ def esc_quit_game(key):
 
     while quit_on:
         if key == '\x1b':
-            quit = input(
-                'Završi igru? (DA->Enter, NE->Esc)\nQuit game? (YES->Enter, NO->Esc)'
-            )
+            quit = input([
+                'Završi igru? (DA->Enter, NE->Esc) ',
+                'Quit game? (YES->Enter, NO->Esc) '
+            ][language_index])
             if quit == '\x1b':
                 clear()
                 break
             elif quit == '':
                 clear()
-                print('Igra završava...\nThe game is quitting...',
-                      end=' ',
-                      flush=True)
+                print(['Igra završava...',
+                       'The game is quitting...'][language_index])
                 sleep(2)
-                clear()
                 sys.exit()
         else:
             quit_on = False
@@ -117,6 +116,7 @@ def set_language_intro():
 
 
 clear()
+
 language_index = set_language_intro()
 
 game = True
@@ -129,12 +129,21 @@ while game:
             getpass.getpass(
                 ['Upiši pojam za pogađanje: ',
                  'Type a term to guess: '][language_index]).upper())
-        start = input([
-            '\nZa nastavak pritisni Enter\nZa novi unos bilo koju drugu tipku: ',
-            '\nHit Enter to continue\nOr any key for new term: '
-        ][language_index])
-        if start == '':
-            break
+        print(term)
+        if not term:
+            print([
+                'Upiši više od nula slova!', 'Type more than zero characters!'
+            ][language_index])
+            sleep(2)
+        elif '\x1b' in term[0]:
+            esc_quit_game(term[0])
+        else:
+            start = input([
+                '\nZa nastavak pritisni Enter\nZa novi unos bilo koju drugu tipku: ',
+                '\nHit Enter to continue\nOr any key for new term: '
+            ][language_index])
+            if start == '':
+                break
 
     clear()
     hidden_term = ''
@@ -216,6 +225,9 @@ while game:
         if new_game == '':
             replay = False
         elif new_game == '\x1b':
+            print('\n')
+            print(['Kraj igre...', 'Ending game...'][language_index])
+            sleep(2)
             clear()
             game = False
             break
