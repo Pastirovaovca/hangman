@@ -129,7 +129,6 @@ while game:
             getpass.getpass(
                 ['Upiši pojam za pogađanje: ',
                  'Type a term to guess: '][language_index]).upper())
-        print(term)
         if not term:
             print([
                 'Upiši više od nula slova!', 'Type more than zero characters!'
